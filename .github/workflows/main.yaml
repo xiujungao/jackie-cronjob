@@ -7,15 +7,11 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # log into docker hub
       - name: Log in to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -26,7 +22,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ghcr.io/${{ github.repository }}
+          images: ${{ secrets.DOCKER_HUB_USERNAME }}/jackie-cronjob
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
