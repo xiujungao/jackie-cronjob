@@ -47,8 +47,8 @@ jobs:
       - name: Log in to OpenShift
         uses: redhat-actions/oc-login@v1
         with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_CLUSTER_URL }}
-          openshift_token: ${{ secrets.OPENSHIFT_API_TOKEN }}
+          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
+          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
           namespace: ${{ secrets.OPENSHIFT_PROJECT_NAME }}
 
       - name: Apply OpenShift deployment YAML files
