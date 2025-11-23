@@ -1,10 +1,10 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: jackie_cronjob
+  name: jackie-cronjob
 spec:
   selector:
-    app: jackie_cronjob
+    app: jackie-cronjob
   ports:
   - name: http
     port: 8080

@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: jackie_cronjob
+  name: jackie-cronjob
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: jackie_cronjob
+      app: jackie-cronjob
   template:
     metadata:
       labels:
-        app: jackie_cronjob
+        app: jackie-cronjob
     spec:
       containers:
-      - name: jackie_cronjob
-        image: jackie_cronjob
+      - name: jackie-cronjob
+        image: jackie-cronjob
         ports:
         - containerPort: 8080
         livenessProbe:

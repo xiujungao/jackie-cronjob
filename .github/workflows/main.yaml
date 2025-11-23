@@ -61,7 +61,7 @@ jobs:
         run: | 
           oc apply -f openshift/deployment.yaml
           FIRST_TAG=$(echo "${{ needs.build-and-push-image.outputs.image_tags }}" | head -n 1)
-          oc set image deployment/jackie_cronjob jackie_cronjob=$FIRST_TAG
+          oc set image deployment/jackie-cronjob jackie-cronjob=$FIRST_TAG
 
       - name: Apply Openshift service and cronjob YAML files
         run: |
