@@ -58,12 +58,18 @@ jobs:
           oc project ${{ secrets.OPENSHIFT_PROJECT_NAME }}  # e.g., xiujun-dev
 
       - name: Update image tag in deployment.yaml
-        env:
-          # Make the first tag available as an environment variable
-          NEW_IMAGE_TAG: ${{ needs.build-and-push-image.outputs.image_tags }}
         run: |
-          # Use the environment variable for substitution
-          sed -i "s|DOCKER_IMAGE_REPLACE_ME|$NEW_IMAGE_TAG|g" openshift/deployment.yaml
+          # The output from the build job can be multi-line, so we take the first line.
+          FIRST_TAG=$(echo "${{ needs.build-and-push-image.outputs.image_tags }}" | head -n 1)
+          
+          # Add a check to ensure the tag is not empty
+          if [ -z "$FIRST_TAG" ]; then
+            echo "::error::Could not determine image tag from build job."
+            exit 1
+          fi
+          
+          echo "Updating deployment with image: $FIRST_TAG"
+          sed -i "s|DOCKER_IMAGE_REPLACE_ME|$FIRST_TAG|g" openshift/deployment.yaml
 
       - name: Apply all OpenShift YAML files
         run: oc apply -f openshift/
