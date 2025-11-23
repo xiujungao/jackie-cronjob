@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build, Push, and Deploy
 
 on:
   push:
@@ -7,6 +7,9 @@ on:
 jobs:
   build-and-push-image:
     runs-on: ubuntu-latest
+    outputs:
+      # Export the generated tags to be used in the deploy job
+      image_tags: ${{ steps.meta.outputs.tags }}
 
     steps:
       - name: Checkout repository
@@ -22,6 +25,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
+          # The image name in Docker Hub
           images: ${{ secrets.DOCKER_HUB_USERNAME }}/jackie-cronjob
 
       - name: Build and push Docker image
@@ -31,3 +35,29 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+
+  deploy-to-openshift:
+    needs: build-and-push-image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to OpenShift
+        uses: redhat-actions/oc-login@v1
+        with:
+          openshift_server_url: ${{ secrets.OPENSHIFT_CLUSTER_URL }}
+          openshift_token: ${{ secrets.OPENSHIFT_API_TOKEN }}
+          namespace: ${{ secrets.OPENSHIFT_PROJECT_NAME }}
+
+      - name: Apply OpenShift deployment YAML files
+        run: | 
+          oc apply -f openshift/deployment.yaml
+          FIRST_TAG=$(echo "${{ needs.build-and-push-image.outputs.image_tags }}" | head -n 1)
+          oc set image deployment/jackie_cronjob jackie_cronjob=$FIRST_TAG
+
+      - name: Apply Openshift service and cronjob YAML files
+        run: |
+          oc apply -f openshift/service.yaml
+          oc apply -f openshift/cronjob.yaml
