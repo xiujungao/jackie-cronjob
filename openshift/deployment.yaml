@@ -12,9 +12,11 @@ spec:
       labels:
         app: jackie-cronjob
     spec:
+      imagePullSecrets:
+        - name: dockerhub-pull
       containers:
       - name: jackie-cronjob
-        image: jackie-cronjob
+        image: DOCKER_IMAGE_REPLACE_ME
         ports:
         - containerPort: 8080
         livenessProbe:
