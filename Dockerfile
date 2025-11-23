@@ -1,5 +1,5 @@
 # Use an OpenJDK image to build the application, as the Maven wrapper will download Maven
-FROM openjdk:21-slim AS build
+FROM eclipse-temurin:21-jdk-alpine AS build
 
 # Set the working directory
 WORKDIR /app
@@ -19,7 +19,7 @@ COPY src ./src
 RUN ./mvnw clean install -DskipTests
 
 # Use a smaller OpenJDK image for the final image
-FROM openjdk:21-slim
+FROM eclipse-temurin:21-jdk-alpine
 
 # Set the working directory
 WORKDIR /app
