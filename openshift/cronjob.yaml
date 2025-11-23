@@ -8,12 +8,11 @@ spec:
     spec:
       template:
         spec:
+          imagePullSecrets:
+            - name: dockerhub-pull
           containers:
           - name: jackie-cronjob
-            image: jackie-cronjob
-            args:
-            - /bin/sh
-            - -c
-            - curl -X POST http://jackie-cronjob:8080/actuator/shutdown
-          restartPolicy: Never
+            image: xiujungao/jackie-cronjob:master
+
+          restartPolicy: OnFailure
       backoffLimit: 4
