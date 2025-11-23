@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: jackie_cronjob
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: jackie_cronjob
+  template:
+    metadata:
+      labels:
+        app: jackie_cronjob
+    spec:
+      containers:
+      - name: jackie_cronjob
+        image: jackie_cronjob
+        ports:
+        - containerPort: 8080
+        livenessProbe:
+          httpGet:
+            path: /actuator/health/liveness
+            port: 8080
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 5

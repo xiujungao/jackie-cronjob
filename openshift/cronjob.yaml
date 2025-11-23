@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: jackie_cronjob
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: jackie_cronjob
+            image: jackie_cronjob
+            args:
+            - /bin/sh
+            - -c
+            - curl -X POST http://jackie_cronjob:8080/actuator/shutdown
+          restartPolicy: Never
+      backoffLimit: 4
